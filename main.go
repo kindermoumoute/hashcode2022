@@ -7,11 +7,11 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"strings"
 
 	"github.com/gammazero/workerpool"
 	"github.com/kindermoumoute/hashcode2022/logger"
 	"github.com/kindermoumoute/hashcode2022/models"
+	"github.com/kindermoumoute/hashcode2022/simulator"
 	"go.uber.org/atomic"
 )
 
@@ -33,28 +33,12 @@ var (
 
 	//go:embed input/f_find_great_mentors.in.txt
 	f string
-
-	allInputs = map[string]string{
-		"A": a,
-		"B": b,
-		"C": c,
-		"D": d,
-		"E": e,
-		"F": f,
-	}
 )
 
 func main() {
-	inputChoice := "A"
-	if os.Args[1] != "" {
-		inputChoice = strings.ToLower(os.Args[1])
-	}
-	rawInput, ok := allInputs[inputChoice]
-	if !ok {
-		assertNoErr(fmt.Errorf("input %s does not exist", inputChoice))
-	}
+	inputChoice := "C"
 	logger.L = logger.L.Named(inputChoice)
-	input := models.ParseInput(rawInput)
+	input := models.ParseInput(c)
 
 	wp := workerpool.New(runtime.NumCPU())
 	// Solve each input in a different worker
@@ -66,13 +50,13 @@ func main() {
 		alpha := alpha
 		wp.Submit(func() {
 			output := Solver1(input, Solver1Parameters{})
-			finalScore := output.FinalScore(input)
+			finalScore := simulator.Simulator(output, input)
 
-			if maxScore.Load() < output.FinalScore() { // If new score is found
-				maxScore.Store(finalScore)
-				logger.L.Infof("new high score is %f", output.FinalScore())
-				assertNoErr(ioutil.WriteFile(path.Join("output", inputChoice+fmt.Sprintf("_%2f_latest.txt", alpha)), []byte(output.Generate()), 0644))
-			}
+			// if maxScore.Load() < output.FinalScore(input) { // If new score is found
+			maxScore.Store(finalScore)
+			logger.L.Infof("new high score is %f", finalScore)
+			assertNoErr(ioutil.WriteFile(path.Join("output", inputChoice+fmt.Sprintf("_%2f_latest.txt", alpha)), []byte(output.Generate()), 0644))
+			// }
 		})
 	}
 

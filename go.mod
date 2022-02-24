@@ -19,11 +19,3 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
-
-replace github.com/kindermoumoute/hashcode2022 v0.0.0 => .
-
-replace github.com/kindermoumoute/hashcode2022/models v0.0.0 => ./models
-
-replace github.com/kindermoumoute/hashcode2022/logger v0.0.0 => ./logger
-
-replace github.com/kindermoumoute/hashcode2022/simulator v0.0.0 => ./simulator

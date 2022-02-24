@@ -5,12 +5,21 @@ import (
 	"strings"
 
 	"github.com/kindermoumoute/adventofcode/pkg"
+	"github.com/kindermoumoute/hashcode2022/logger"
 )
 
 type Input struct {
 	Contributors []*Contributor
 	// Skills       []*Skill
 	Projects []*Project
+
+	MaxDate uint
+}
+
+func (i *Input) PrintSomeStats() {
+	logger.L.Infof("project count: ", len(i.Projects))
+	logger.L.Infof("contributor count: ", len(i.Contributors))
+	// logger.L.Infof("contributor count: ", len(i.Contributors))
 }
 
 func ParseInput(s string) *Input {
@@ -22,7 +31,8 @@ func ParseInput(s string) *Input {
 		contributorLine := strings.Split(lines[i], " ")
 		i++
 		newContributor := &Contributor{
-			Name: contributorLine[0],
+			Name:   contributorLine[0],
+			Skills: map[string]*Skill{},
 		}
 		skillsCount, _ := strconv.Atoi(contributorLine[1])
 		for ; skillsCount > 0; skillsCount-- {
@@ -34,7 +44,7 @@ func ParseInput(s string) *Input {
 			tmp, _ := strconv.Atoi(skillLine[1])
 			newContribSkill.Level = uint(tmp)
 
-			newContributor.Skills = append(newContributor.Skills, newContribSkill)
+			newContributor.Skills[newContribSkill.Name] = newContribSkill
 		}
 		input.Contributors = append(input.Contributors, newContributor)
 	}
@@ -48,7 +58,10 @@ func ParseInput(s string) *Input {
 			Name:         projectLine[0],
 			Duration:     uint(intList[0]),
 			BestBefore:   uint(intList[2]),
-			AwardedScore: float64(intList[1]),
+			AwardedScore: uint(intList[1]),
+		}
+		if newProject.BestBefore+newProject.AwardedScore > input.MaxDate {
+			input.MaxDate = newProject.BestBefore + newProject.AwardedScore
 		}
 
 		roleID := 0
