@@ -20,13 +20,13 @@ func (c *Contributor) Score(project *Project) float64 {
 		skill, exists := c.Skills[role.RequiredSkill]
 		if !exists {
 			skill = &Skill{
-				Name:  skill.Name,
+				Name:  role.RequiredSkill,
 				Level: 0,
 			}
 			c.Skills[role.RequiredSkill] = skill
 		}
 
-		if skill.Level < role.RequiredLevel {
+		if skill.Level-1 < role.RequiredLevel {
 			continue
 		}
 

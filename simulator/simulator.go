@@ -12,10 +12,7 @@ type Busy struct {
 }
 
 func Simulator(ouput *models.Output, input *models.Input) float64 {
-	var (
-		finalScore uint
-		numDay     uint
-	)
+	var finalScore uint
 
 	busy := make(map[string]Busy, len(input.Contributors))
 	for _, contributor := range input.Contributors {
@@ -23,7 +20,7 @@ func Simulator(ouput *models.Output, input *models.Input) float64 {
 	}
 
 	for _, executedProject := range ouput.ExecutedProjects {
-		endProject := numDay
+		var endProject uint
 
 		for numRole, contributor := range executedProject.Contributors {
 			role := executedProject.Project.Roles[numRole]

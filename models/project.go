@@ -32,7 +32,13 @@ func (p *Project) Score(currentTime uint) float64 {
 	3- Sets assignation flag to true
 */
 func (p *Project) Assign(availableContributors map[string]*Contributor) bool {
-
+	// sortedContributors := []*Contributor(nil)
+	// for _, contributor := range availableContributors {
+	// 	sortedContributors = append(sortedContributors, contributor)
+	// }
+	// sort.Slice(sortedContributors, func(i, j int) bool {
+	// 	return sortedContributors[i].Score(p) > sortedContributors[j].Score(p)
+	// })
 	team := make(map[int]*Contributor) // index is role ID
 	contribUsed := make(map[string]bool)
 roleLoop:
@@ -45,7 +51,16 @@ roleLoop:
 
 			// Add to the team if has enough skills
 			contributorSkill, hasSkill := contributor.Skills[role.RequiredSkill]
-			if hasSkill && role.RequiredLevel <= contributorSkill.Level {
+			if !hasSkill {
+				contributor.Skills[role.RequiredSkill] = &Skill{
+					Name:  role.RequiredSkill,
+					Level: 0,
+				}
+				contributorSkill = contributor.Skills[role.RequiredSkill]
+			}
+
+			if (role.RequiredLevel <= contributorSkill.Level) ||
+				role.RequiredLevel-1 == contributorSkill.Level && role.MentorExistsMap(availableContributors, contribUsed) {
 				team[role.ID] = contributor
 				hasContributor = true
 				contribUsed[contributor.Name] = true

@@ -11,8 +11,6 @@ import (
 	"github.com/gammazero/workerpool"
 	"github.com/kindermoumoute/hashcode2022/logger"
 	"github.com/kindermoumoute/hashcode2022/models"
-	"github.com/kindermoumoute/hashcode2022/simulator"
-	"go.uber.org/atomic"
 )
 
 var (
@@ -36,26 +34,32 @@ var (
 )
 
 func main() {
-	inputChoice := "C"
-	logger.L = logger.L.Named(inputChoice)
-	input := models.ParseInput(c)
 
 	wp := workerpool.New(runtime.NumCPU())
 	// Solve each input in a different worker
 
-	tryingAlphas := []float64{0.1}
+	tryingAlphas := map[string]string{
+		"A": a,
+		"B": b,
+		"C": c,
+		"D": d,
+		"E": e,
+		"F": f,
+	}
 
-	maxScore := atomic.NewFloat64(0)
-	for _, alpha := range tryingAlphas {
-		alpha := alpha
+	// maxScore := atomic.NewFloat64(0)
+	for inputChoice, rawInput := range tryingAlphas {
+		inputChoice := inputChoice
+		input := models.ParseInput(rawInput)
 		wp.Submit(func() {
 			output := Solver1(input, Solver1Parameters{})
-			finalScore := simulator.Simulator(output, input)
+			// finalScore := simulator.Simulator(output, input)
 
 			// if maxScore.Load() < output.FinalScore(input) { // If new score is found
-			maxScore.Store(finalScore)
-			logger.L.Infof("new high score is %f", finalScore)
-			assertNoErr(ioutil.WriteFile(path.Join("output", inputChoice+fmt.Sprintf("_%2f_latest.txt", alpha)), []byte(output.Generate()), 0644))
+			// maxScore.Store(finalScore)
+			// logger.L.Infof("new high score is %f", finalScore)
+			logger.L.Infof("new computed %s", inputChoice)
+			assertNoErr(ioutil.WriteFile(path.Join("output", inputChoice+fmt.Sprintf("_%s_latest.txt", inputChoice)), []byte(output.Generate()), 0644))
 			// }
 		})
 	}
