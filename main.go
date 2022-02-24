@@ -16,23 +16,22 @@ import (
 )
 
 var (
-
-	//go:embed input/a.txt
+	//go:embed input/a_an_example.in.txt
 	a string
 
-	//go:embed input/b.txt
+	//go:embed input/b_better_start_small.in.txt
 	b string
 
-	//go:embed input/c.txt
+	//go:embed input/c_collaboration.in.txt
 	c string
 
-	//go:embed input/d.txt
+	//go:embed input/d_dense_schedule.in.txt
 	d string
 
-	//go:embed input/e.txt
+	//go:embed input/e_exceptional_skills.in.txt
 	e string
 
-	//go:embed input/f.txt
+	//go:embed input/f_find_great_mentors.in.txt
 	f string
 
 	allInputs = map[string]string{
@@ -67,7 +66,7 @@ func main() {
 		alpha := alpha
 		wp.Submit(func() {
 			output := Solver1(input, Solver1Parameters{})
-			finalScore := output.FinalScore()
+			finalScore := output.FinalScore(input)
 
 			if maxScore.Load() < output.FinalScore() { // If new score is found
 				maxScore.Store(finalScore)
